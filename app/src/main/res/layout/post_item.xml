@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="5dp"
+    android:layout_marginBottom="5dp"
+    android:background="@drawable/post_outline"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:elevation="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/post_outline"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="1.3dp"
+                android:layout_marginEnd="1.3dp"
+                android:paddingStart="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="Title"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/border2"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_alignParentBottom="true"
+                android:background="#808080"/>
+
+            <androidx.gridlayout.widget.GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tvDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sed leo ut libero ultricies viverra. Curabitur tortor libero, auctor nec libero id, viverra interdum leo. Suspendisse et neque tempor, sagittis eros vitae, accumsan mi. Donec purus diam, bibendum eget diam a, ultrices lacinia sem. Curabitur semper tellus sit amet fermentum tempor. Maecenas faucibus tortor ligula, at faucibus dolor viverra non. Suspendisse molestie tincidunt dapibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam metus erat, scelerisque nec fringilla finibus, feugiat in dolor. Curabitur ut purus leo. Donec tincidunt nec massa sagittis cursus. Pellentesque habitant morbi tristique senectus et netus et." />
+            </androidx.gridlayout.widget.GridLayout>
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="June 5, 2025, 8:00 p.m." />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>
