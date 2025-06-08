@@ -2,15 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="5dp"
-    android:layout_marginEnd="5dp"
-    android:layout_marginBottom="5dp"
+    android:layout_marginStart="15dp"
+    android:layout_marginEnd="15dp"
+    android:layout_marginBottom="15dp"
     android:background="@drawable/post_outline"
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:elevation="5dp">
 
         <LinearLayout
@@ -25,6 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="1.3dp"
                 android:layout_marginEnd="1.3dp"
+                android:fontFamily="sans-serif-black"
                 android:paddingStart="10dp"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
@@ -49,8 +50,12 @@
                     android:id="@+id/tvDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLength="500"
                     android:paddingStart="10dp"
                     android:paddingTop="5dp"
+                    android:paddingEnd="10dp"
                     android:paddingBottom="5dp"
                     android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sed leo ut libero ultricies viverra. Curabitur tortor libero, auctor nec libero id, viverra interdum leo. Suspendisse et neque tempor, sagittis eros vitae, accumsan mi. Donec purus diam, bibendum eget diam a, ultrices lacinia sem. Curabitur semper tellus sit amet fermentum tempor. Maecenas faucibus tortor ligula, at faucibus dolor viverra non. Suspendisse molestie tincidunt dapibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam metus erat, scelerisque nec fringilla finibus, feugiat in dolor. Curabitur ut purus leo. Donec tincidunt nec massa sagittis cursus. Pellentesque habitant morbi tristique senectus et netus et." />
             </androidx.gridlayout.widget.GridLayout>
@@ -59,6 +64,7 @@
                 android:id="@+id/tvDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
                 android:paddingStart="10dp"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"

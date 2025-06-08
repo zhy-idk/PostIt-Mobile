@@ -1,5 +1,7 @@
 package com.example.postit;
 
+import java.util.Objects;
+
 public class PostModelClass {
     private int id;
     private String title;
@@ -64,4 +66,34 @@ public class PostModelClass {
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PostModelClass that = (PostModelClass) o;
+        return id == that.id &&
+                Objects.equals(title, that.title) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(banner, that.banner) &&
+                Objects.equals(user, that.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, description, banner, user);
+    }
+
+    @Override
+    public String toString() {
+        return "PostModelClass{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", banner='" + banner + '\'' +
+                ", user='" + user + '\'' +
+                ", created_at='" + created_at + '\'' +
+                '}';
+    }
+
 }

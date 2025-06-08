@@ -1,27 +1,32 @@
 package com.example.postit;
 
+import static android.view.View.GONE;
+
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import androidx.fragment.app.FragmentContainerView;
 
 public class MainActivity extends AppCompatActivity {
-    RecyclerView rvPosts;
-    List<PostModelClass> dataList = new ArrayList<>();
-    PostAdapter dataAdapter;
+    FragmentContainerView fragmentContainerView;
+    ImageButton btnMenu;
+    LinearLayout menu, menuLogged;
+    TextView tvHome, tvLogin, tvRegister, tvPostIt, tvHomeLogged, tvYourPost, tvNewPost, tvLogout;
+
+    static SharedPreferences sharedPreferences;
+    String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,38 +39,176 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        rvPosts = findViewById(R.id.rvPosts);
-        rvPosts.setLayoutManager(new LinearLayoutManager(this));
-        dataAdapter = new PostAdapter(dataList);
-        rvPosts.setAdapter(dataAdapter);
-        fetchPosts();
-    }
+        sharedPreferences = getSharedPreferences("auth", MODE_PRIVATE);
 
-    private void fetchPosts(){
-        dataList.clear();
+        fragmentContainerView = findViewById(R.id.fragmentContainerView);
+        btnMenu = findViewById(R.id.btnMenu);
+        menu = findViewById(R.id.menu);
+        menuLogged = findViewById(R.id.menuLogged);
 
-        ApiService apiService = RetrofitClient.getInstance().create(ApiService.class);
-        Call<List<PostModelClass>> call = apiService.getPosts();
+        tvHome = findViewById(R.id.tvHome);
+        tvLogin = findViewById(R.id.tvLogin);
+        tvRegister = findViewById(R.id.tvRegister);
+        tvPostIt = findViewById(R.id.tvPostIt);
+        tvHomeLogged = findViewById(R.id.tvHomeLogged);
+        tvYourPost = findViewById(R.id.tvYourPost);
+        tvNewPost = findViewById(R.id.tvNewPost);
+        tvLogout = findViewById(R.id.tvLogout);
 
-        call.enqueue(new Callback<List<PostModelClass>>() {
+        setToHome();
+
+        btnMenu.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(Call<List<PostModelClass>> call, Response<List<PostModelClass>> response) {
-                if (response.isSuccessful()) {
-                    List<PostModelClass> posts = response.body();
-                    if (posts != null && !posts.isEmpty()) {
-                        dataList.addAll(posts);
-
-                        dataAdapter.notifyDataSetChanged();
-                    }
-                } else {
-                    Toast.makeText(MainActivity.this, "Failed to fetch posts", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<PostModelClass>> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Error fetching post data: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onClick(View view) {
+                showMenu();
             }
         });
+
+        tvPostIt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setToHome();
+                hideMenu();
+            }
+        });
+
+        tvHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setToHome();
+                showMenu();
+
+                highlightTextView(tvHome);
+            }
+        });
+
+        tvLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setToLogin();
+                showMenu();
+
+                highlightTextView(tvLogin);
+            }
+        });
+
+        tvRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setToRegister();
+                showMenu();
+
+                highlightTextView(tvRegister);
+            }
+        });
+
+        tvHomeLogged.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setToHome();
+                showMenu();
+
+                highlightTextView(tvHomeLogged);
+            }
+        });
+
+        tvYourPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setToUserPost();
+                showMenu();
+
+                highlightTextView(tvYourPost);
+            }
+        });
+
+        tvNewPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setToNewPost();
+                showMenu();
+
+                highlightTextView(tvNewPost);
+        }
+    });
+
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        token = sharedPreferences.getString("token", null);
+    }
+
+    private void hideMenu(){
+        if (token != null) {
+            menuLogged.setVisibility(GONE);
+        } else {
+            menu.setVisibility(GONE);
+        }
+    }
+
+    private void showMenu(){
+        if (token != null) {
+            if (menuLogged.getVisibility() == GONE) {
+                menuLogged.setVisibility(View.VISIBLE);
+            } else {
+                menuLogged.setVisibility(GONE);
+            }
+        } else {
+            if (menu.getVisibility() == GONE) {
+                menu.setVisibility(View.VISIBLE);
+            } else {
+                menu.setVisibility(GONE);
+            }
+        }
+    }
+
+    private void highlightTextView(TextView textView) {
+        tvHome.setTextColor(ContextCompat.getColor(this, R.color.light_gray));
+        tvLogin.setTextColor(ContextCompat.getColor(this, R.color.light_gray));
+        tvRegister.setTextColor(ContextCompat.getColor(this, R.color.light_gray));
+        tvHomeLogged.setTextColor(ContextCompat.getColor(this, R.color.light_gray));
+        tvYourPost.setTextColor(ContextCompat.getColor(this, R.color.light_gray));
+        tvNewPost.setTextColor(ContextCompat.getColor(this, R.color.light_gray));
+        tvLogout.setTextColor(ContextCompat.getColor(this, R.color.light_gray));
+
+        textView.setTextColor(ContextCompat.getColor(this, R.color.white));
+    }
+
+    private void setToHome(){
+        HomeFragment fragment = new HomeFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainerView, fragment)
+                .commit();
+    }
+
+    private void setToLogin(){
+        LoginFragment fragment = new LoginFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainerView, fragment)
+                .commit();
+    }
+
+    private void setToRegister(){
+        RegisterFragment fragment = new RegisterFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainerView, fragment)
+                .commit();
+    }
+
+    private void setToUserPost(){
+        UserPostFragment fragment = new UserPostFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainerView, fragment)
+                .commit();
+    }
+
+    private void setToNewPost() {
+        NewPostFragment fragment = new NewPostFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragmentContainerView, fragment)
+                .commit();
+    }
+
 }
