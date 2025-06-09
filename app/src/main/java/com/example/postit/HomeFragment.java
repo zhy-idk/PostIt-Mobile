@@ -1,5 +1,7 @@
 package com.example.postit;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -84,7 +86,27 @@ public class HomeFragment extends Fragment {
 
         rvPosts = view.findViewById(R.id.rvPosts);
         rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
-        dataAdapter = new PostAdapter(dataList);
+        dataAdapter = new PostAdapter(dataList, new PostAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                PostModelClass selectedPost = dataList.get(position);
+
+                SharedPreferences sharedPreferences = getContext().getSharedPreferences("post", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt("postId", selectedPost.getId());
+                editor.putString("postTitle", selectedPost.getTitle());
+                editor.putString("postDescription", selectedPost.getDescription());
+                editor.putString("postDate", selectedPost.getCreated_at());
+                editor.putString("postUser", selectedPost.getUser());
+                editor.putString("postBanner", selectedPost.getBanner());
+                editor.apply();
+
+                PostDetailFragment fragment = new PostDetailFragment();
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainerView, fragment)
+                        .commit();
+            }
+        });
         rvPosts.setAdapter(dataAdapter);
 
     }

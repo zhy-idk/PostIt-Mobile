@@ -26,6 +26,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import java.io.File;
 
 import okhttp3.MediaType;
@@ -37,18 +39,19 @@ import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link NewPostFragment#newInstance} factory method to
+ * Use the {@link EditPostFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewPostFragment extends Fragment {
-    TextView tvFileName;
-    EditText etTitle, etDescription;
-    LinearLayout btnFileSelect;
-    ImageView imageView;
-    Button btnSubmit;
+public class EditPostFragment extends Fragment {
+    TextView tvEditFileName;
+    EditText etEditTitle, etEditDescription;
+    LinearLayout btnEditFileSelect;
+    ImageView imageViewEditBanner;
+    Button btnEditSubmit, btnDelete;
 
     Uri imageUri;
     SharedPreferences sharedPreferences;
+    SharedPreferences authSharedPreferences;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,7 +62,7 @@ public class NewPostFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public NewPostFragment() {
+    public EditPostFragment() {
         // Required empty public constructor
     }
 
@@ -69,11 +72,11 @@ public class NewPostFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment NewPostFragment.
+     * @return A new instance of fragment EditPostFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NewPostFragment newInstance(String param1, String param2) {
-        NewPostFragment fragment = new NewPostFragment();
+    public static EditPostFragment newInstance(String param1, String param2) {
+        EditPostFragment fragment = new EditPostFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -94,36 +97,59 @@ public class NewPostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_new_post, container, false);
+        return inflater.inflate(R.layout.fragment_edit_post, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tvFileName = view.findViewById(R.id.tvFileName);
-        etTitle = view.findViewById(R.id.etTitle);
-        etDescription = view.findViewById(R.id.etDescription);
-        btnFileSelect = view.findViewById(R.id.btnFileSelect);
-        imageView = view.findViewById(R.id.imageViewBanner);
-        btnSubmit = view.findViewById(R.id.btnSubmit);
 
-        sharedPreferences = getActivity().getSharedPreferences("auth", MODE_PRIVATE);
+        tvEditFileName = view.findViewById(R.id.tvEditFileName);
+        etEditTitle = view.findViewById(R.id.etEditTitle);
+        etEditDescription = view.findViewById(R.id.etEditDescription);
+        imageViewEditBanner = view.findViewById(R.id.imageViewEditBanner);
+        btnEditSubmit = view.findViewById(R.id.btnEditSubmit);
+        btnDelete = view.findViewById(R.id.btnDelete);
 
-        btnFileSelect.setOnClickListener(new View.OnClickListener() {
+        btnEditFileSelect = view.findViewById(R.id.btnEditFileSelect);
+
+        sharedPreferences = getActivity().getSharedPreferences("post", MODE_PRIVATE);
+        authSharedPreferences = getActivity().getSharedPreferences("auth", MODE_PRIVATE);
+
+        String fileName = null;
+        if (imageUri != null) {
+            String path = FileUtils.getFilePath(requireContext(), imageUri);
+            if (path != null) {
+                fileName = new File(path).getName();
+            }
+        }
+
+        tvEditFileName.setText(fileName != null ? fileName : "No file chosen");
+        etEditTitle.setText(sharedPreferences.getString("postTitle", ""));
+        etEditDescription.setText(sharedPreferences.getString("postDescription", ""));
+        Glide.with(imageViewEditBanner.getContext()).load(RetrofitClient.BASE_URL + sharedPreferences.getString("postBanner", "")).into(imageViewEditBanner);
+
+        btnEditSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                submitEdit();
+            }
+        });
+
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deletePost();
+            }
+        });
+
+        btnEditFileSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getImage();
             }
         });
-
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createPost();
-            }
-        });
     }
-
 
     public void getImage() {
         pickMedia.launch(new PickVisualMediaRequest.Builder()
@@ -135,22 +161,22 @@ public class NewPostFragment extends Fragment {
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 if (uri != null) {
                     imageUri = uri;
-                    imageView.setVisibility(VISIBLE);
-                    imageView.setImageURI(imageUri);
+                    imageViewEditBanner.setVisibility(VISIBLE);
+                    imageViewEditBanner.setImageURI(imageUri);
                     File imageFile = new File(FileUtils.getFilePath(requireContext(), imageUri));
-                    tvFileName.setText(imageFile.getName());
+                    tvEditFileName.setText(imageFile.getName());
                 } else {
                     imageUri = uri;
-                    imageView.setImageURI(imageUri);
-                    imageView.setVisibility(GONE);
-                    tvFileName.setText("No file chosen");
+                    imageViewEditBanner.setImageURI(imageUri);
+                    imageViewEditBanner.setVisibility(GONE);
+                    tvEditFileName.setText("No file chosen");
                 }
             });
 
-    public void createPost(){
-
-        String title = etTitle.getText().toString();
-        String description = etDescription.getText().toString();
+    private void submitEdit(){
+        String title = etEditTitle.getText().toString();
+        String description = etEditDescription.getText().toString();
+        int id = sharedPreferences.getInt("postId", 0);
 
         RequestBody titleBody = RequestBody.create(MediaType.parse("text/plain"), title);
         RequestBody descriptionBody = RequestBody.create(MediaType.parse("text/plain"), description);
@@ -163,15 +189,18 @@ public class NewPostFragment extends Fragment {
             Log.d("Image name", imageFile.toString());
         }
 
-        String token = sharedPreferences.getString("token", null);
+        String token = authSharedPreferences.getString("token", null);
 
         ApiService apiService = RetrofitClient.getInstance().create(ApiService.class);
-        Call<PostModelClass> call = apiService.createPost("Token " + token, titleBody, descriptionBody, imagePart);
+        Call<PostModelClass> call = apiService.editPost("Token " + token, id, titleBody, descriptionBody, imagePart);
         call.enqueue(new Callback<PostModelClass>() {
             @Override
             public void onResponse(Call<PostModelClass> call, Response<PostModelClass> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()){
                     Toast.makeText(getContext(), "Post created successfully", Toast.LENGTH_SHORT).show();
+                    etEditTitle.setText("");
+                    etEditDescription.setText("");
+                    imageViewEditBanner.setImageURI(null);
 
                     HomeFragment fragment = new HomeFragment();
                     getParentFragmentManager().beginTransaction()
@@ -185,6 +214,35 @@ public class NewPostFragment extends Fragment {
             @Override
             public void onFailure(Call<PostModelClass> call, Throwable t) {
                 Toast.makeText(getContext(), "Error creating post: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void deletePost(){
+        String token = authSharedPreferences.getString("token", null);
+        int id = sharedPreferences.getInt("postId", 0);
+
+        ApiService apiService = RetrofitClient.getInstance().create(ApiService.class);
+        Call<Void> call = apiService.deletePost("Token " + token, id);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()){
+                    Toast.makeText(getContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show();
+
+                    HomeFragment fragment = new HomeFragment();
+                    getParentFragmentManager().beginTransaction()
+                            .replace(R.id.fragmentContainerView, fragment)
+                            .commit();
+                } else {
+                    Toast.makeText(getContext(), "Failed to delete post", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(getContext(), "Error deleting post: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -3,6 +3,9 @@ package com.example.postit;
 import static android.view.View.GONE;
 
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,8 +13,10 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -19,13 +24,17 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentContainerView;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainActivity extends AppCompatActivity {
     FragmentContainerView fragmentContainerView;
     ImageButton btnMenu;
     LinearLayout menu, menuLogged;
     TextView tvHome, tvLogin, tvRegister, tvPostIt, tvHomeLogged, tvYourPost, tvNewPost, tvLogout;
 
-    static SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences;
     String token;
 
     @Override
@@ -69,6 +78,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 setToHome();
                 hideMenu();
+
+                if (token != null) {
+                    highlightTextView(tvHomeLogged);
+                } else {
+                    highlightTextView(tvHome);
+                }
             }
         });
 
@@ -131,6 +146,13 @@ public class MainActivity extends AppCompatActivity {
                 highlightTextView(tvNewPost);
         }
     });
+
+        tvLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showLogoutDialog();
+            }
+        });
 
     }
 
@@ -209,6 +231,49 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragmentContainerView, fragment)
                 .commit();
+    }
+
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Log Out")
+                .setMessage("Are you sure you want to log out?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+
+                    logout();
+
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
+    }
+
+    private void logout() {
+
+        ApiService apiService = RetrofitClient.getInstance().create(ApiService.class);
+        Call<Void> call = apiService.logout("Token " + token);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()){
+                    HomeFragment fragment = new HomeFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragmentContainerView, fragment)
+                            .commit();
+
+                    sharedPreferences.edit().clear().apply();
+
+                    Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Error logging out", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

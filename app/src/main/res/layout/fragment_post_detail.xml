@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".PostDetailFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="10dp"
+        android:paddingBottom="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvPostTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="start"
+                android:text="Title"
+                android:textSize="25sp" />
+
+            <Button
+                android:id="@+id/btnEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:layout_weight="0"
+                android:backgroundTint="@color/blue"
+                android:text="Edit"
+                android:textSize="16sp"
+                android:visibility="gone"
+                app:cornerRadius="8dp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvPostDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="June 09, 2025, 10:00 PM by ralph" />
+
+        <ImageView
+            android:id="@+id/imageViewBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="30dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/edit_outline"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+        <TextView
+            android:id="@+id/tvPostDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:lineSpacingExtra="5dp"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sed leo ut libero ultricies viverra. Curabitur tortor libero, auctor nec libero id, viverra interdum leo. Suspendisse et neque tempor, sagittis eros vitae, accumsan mi. Donec purus diam, bibendum eget diam a, ultrices lacinia sem. Curabitur semper tellus sit amet fermentum tempor. Maecenas faucibus tortor ligula, at faucibus dolor viverra non. Suspendisse molestie tincidunt dapibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam metus erat, scelerisque nec fringilla finibus, feugiat in dolor. Curabitur ut purus leo. Donec tincidunt nec massa sagittis cursus. Pellentesque habitant morbi tristique senectus et netus et."
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+</FrameLayout>

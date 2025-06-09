@@ -52,12 +52,14 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:fontFamily="sans-serif-medium"
-                    android:maxLength="500"
+                    android:lineSpacingExtra="4dp"
+                    android:maxLines="10"
                     android:paddingStart="10dp"
                     android:paddingTop="5dp"
                     android:paddingEnd="10dp"
                     android:paddingBottom="5dp"
-                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sed leo ut libero ultricies viverra. Curabitur tortor libero, auctor nec libero id, viverra interdum leo. Suspendisse et neque tempor, sagittis eros vitae, accumsan mi. Donec purus diam, bibendum eget diam a, ultrices lacinia sem. Curabitur semper tellus sit amet fermentum tempor. Maecenas faucibus tortor ligula, at faucibus dolor viverra non. Suspendisse molestie tincidunt dapibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam metus erat, scelerisque nec fringilla finibus, feugiat in dolor. Curabitur ut purus leo. Donec tincidunt nec massa sagittis cursus. Pellentesque habitant morbi tristique senectus et netus et." />
+                    android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sed leo ut libero ultricies viverra. Curabitur tortor libero, auctor nec libero id, viverra interdum leo. Suspendisse et neque tempor, sagittis eros vitae, accumsan mi. Donec purus diam, bibendum eget diam a, ultrices lacinia sem. Curabitur semper tellus sit amet fermentum tempor. Maecenas faucibus tortor ligula, at faucibus dolor viverra non. Suspendisse molestie tincidunt dapibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam metus erat, scelerisque nec fringilla finibus, feugiat in dolor. Curabitur ut purus leo. Donec tincidunt nec massa sagittis cursus. Pellentesque habitant morbi tristique senectus et netus et."
+                    android:textSize="16sp" />
             </androidx.gridlayout.widget.GridLayout>
 
             <TextView
