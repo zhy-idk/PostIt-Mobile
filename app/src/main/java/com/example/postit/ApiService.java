@@ -44,7 +44,7 @@ public interface ApiService {
             @Part("password2") RequestBody password2
     );
 
-    @POST("api/logout_api/")
+    @POST("api/logout/")
     Call<Void> logout(
             @Header("Authorization") String token
     );

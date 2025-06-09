@@ -133,6 +133,12 @@ public class PostDetailFragment extends Fragment {
                     if (post != null) {
                         Log.d("Post1", post.getUser());
                         Log.d("Post2", authSharedPreferences.getString("username", ""));
+                        Log.d("Image Test", "" + post.getBanner());
+
+                        if (post.getBanner() == null){
+                            imageViewBanner.setVisibility(View.GONE);
+                        }
+
                         if (post.getUser().equals(authSharedPreferences.getString("username", ""))) {
                             btnEdit.setVisibility(View.VISIBLE);
                         }
